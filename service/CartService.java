@@ -80,14 +80,19 @@ public class CartService {
 	
 	public Cart updateCart(User user, Long cartItemId, int quantity) {
 		
-		if(quantity <=0) {
-			throw new BadRequestException("Quantity must be greater than 0");
-		}
+		
 		Cart cart = cartrepo.findByUser(user)
 		        .orElseThrow(() -> new RuntimeException("Cart not found"));
 		
 		CartItem item=cartitemRepo.findByIdAndCart_User(cartItemId, user)
 				.orElseThrow(()-> new ResourceNotFoundException("Item not found"));
+		Product product=item.getProduct();
+		if(quantity <=0) {
+			throw new BadRequestException("Quantity must be greater than 0");
+		}
+		if (quantity > product.getStockQuantity()) {
+	        throw new BadRequestException("Not enough stock available");
+	    }
 		if (!item.getCart().getUser().getId().equals(user.getId())) {
 		    throw new BadRequestException("Access denied");
 		}
