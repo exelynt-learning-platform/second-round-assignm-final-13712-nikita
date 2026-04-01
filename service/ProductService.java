@@ -18,12 +18,6 @@ public class ProductService {
 	private ProductRepository productrepo;
 	
 	public Product create(ProductDTO dto) {
-		if(dto.getPrice()<=0) {
-			throw new BadRequestException("Price must be greater than 0");
-		}
-		if(dto.getStockQuantity()<0) {
-			throw new BadRequestException("Stock cannot be negative");
-		}
 		Product product=ProductMapper.toEntity(dto);
 		return productrepo.save(product);
 	}
@@ -36,6 +30,7 @@ public class ProductService {
 	}
 	
 	public List<Product> getAll(){
+		
 		return productrepo.findAll();
 	}
 	

@@ -37,7 +37,7 @@ public class OrderController {
 	
 	@GetMapping("/getorderById/{orderId}")
 	public ResponseEntity<?> getOrderById(@PathVariable Long orderId, @AuthenticationPrincipal User user){
-		return ResponseEntity.ok(orderservice.getOrderById(user, orderId));
+		return ResponseEntity.ok(orderservice.getorderById(user, orderId));
 	}
 	@PutMapping("/update/{orderId}")
 	public ResponseEntity<?> updatePayment(@PathVariable Long orderId,@RequestParam String status){

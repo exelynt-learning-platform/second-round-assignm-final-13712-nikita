@@ -40,7 +40,6 @@ public class CartService {
 					return cartrepo.save(newcart);
 					
 				});
-		int totalQuantity = quantity;
 		Optional<CartItem> existingItem = cart.getItem().stream()
 		        .filter(i -> i.getProduct().getId().equals(productId))
 		        .findFirst();
@@ -66,8 +65,10 @@ public class CartService {
 		item.setCart(cart);
 		item.setProduct(product);
 		item.setQuantity(quantity);
+		cartitemRepo.save(item);
 		cart.getItem().add(item);
 		}
+		
 		cartrepo.save(cart);
 		return cart;
 	}

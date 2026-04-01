@@ -1,5 +1,6 @@
 package com.ecommerce.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.entity.Order;
 import com.ecommerce.entity.User;
-import com.ecommerce.exception.ResourceNotFoundException;
-import com.ecommerce.exception.UnauthorizedException;
 import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.service.OrderService;
 import com.ecommerce.service.PaymentService;
@@ -31,15 +30,18 @@ public class PaymentController {
 	@PostMapping("/pay/{orderId}")
 	public ResponseEntity<?> pay(@AuthenticationPrincipal User user,
 			@PathVariable Long orderId) {
-		Order order=orderservice.getOrderById(user, orderId);
+		
+		Order order=orderservice.getorderById(user, orderId);
 		String url=paymentservice.createPayment(order);
         return ResponseEntity.ok(url); 
     }
 
     
     @GetMapping("/success")
-    public ResponseEntity<?> success( @RequestParam Long orderId) {
-
+    public ResponseEntity<?> success( @RequestParam Long orderId,@RequestParam Long paymentId, @RequestParam Long payerId) {
+    	if (paymentId == null || payerId == null) {
+            throw new RuntimeException("Invalid payment response");
+        }
         return ResponseEntity.ok(paymentservice.markPaymentSuccess(orderId));
         
     }

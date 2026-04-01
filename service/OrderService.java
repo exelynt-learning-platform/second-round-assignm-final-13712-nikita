@@ -37,7 +37,7 @@ public class OrderService {
 	    if (cart.getItem().isEmpty()) {
 	        throw new RuntimeException("Cart is empty");
 	    }
-
+	    cartRepo.save(cart);
 	    Order order = new Order();
 	    order.setUser(user);
 	    order.setShippingaddress(address);
@@ -80,7 +80,7 @@ public class OrderService {
 	public List<Order> getuserOrders(User user){
 		return orderRepo.findByUser(user);
 	}
-	public Order getOrderById(User user, Long orderId ) {
+	public Order getorderById(User user, Long orderId ) {
 		Order order=orderRepo.findById(orderId)
 				.orElseThrow(()-> new ResourceNotFoundException("Order not found"));
 		if(!order.getUser().getId().equals(user.getId())) {

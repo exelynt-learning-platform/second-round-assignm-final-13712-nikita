@@ -2,6 +2,7 @@ package com.ecommerce.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -31,15 +32,9 @@ public class ProductController {
 		return ResponseEntity.status(201).body(ProductMapper.toDto(productservice.create(dto)));
 	}
 	@GetMapping("allproducts")
-	public ResponseEntity<List<ProductDTO>> getAll(){
+	public List<ProductDTO> getAll(){
 		List<Product> products=productservice.getAll();
-		List<ProductDTO> dtolist=new ArrayList<>();
-		for(Product p: products) {
-			dtolist.add(ProductMapper.toDto(p));
-		}
-		return ResponseEntity.ok(dtolist);
-		
-		
+		return products.stream().map(ProductMapper::toDto).collect(Collectors.toList());
 	}
 	@GetMapping("/{id}")
 	public ResponseEntity<ProductDTO> getById(@PathVariable Long id){

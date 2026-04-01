@@ -1,7 +1,6 @@
 package com.ecommerce.config;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,7 +40,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
 	        User user = userRepo.findByUsername(username)
-	                .orElseThrow(() -> new RuntimeException("User not found"));
+	                .orElseThrow(() -> new AuthenticationServiceException("User not found"));
 
 	        List<SimpleGrantedAuthority> authorities =
 	                Collections.singletonList(

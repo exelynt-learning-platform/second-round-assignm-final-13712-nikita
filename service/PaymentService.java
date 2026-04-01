@@ -1,23 +1,20 @@
 package com.ecommerce.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.entity.Order;
-import com.ecommerce.exception.BadRequestException;
-import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.repository.OrderRepository;
 import com.paypal.api.payments.Amount;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payer;
 import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.PaymentExecution;
 import com.paypal.api.payments.RedirectUrls;
 import com.paypal.api.payments.Transaction;
 import com.paypal.base.rest.APIContext;
@@ -31,6 +28,11 @@ public class PaymentService {
 	public OrderRepository orderRepo;
 	@Autowired
 	public OrderService orderservice;
+	@Value("${paypal.success.url}")
+	private String successUrl;
+
+	@Value("${paypal.cancel.url}")
+	private String cancelUrl;
 	
 	public String createPayment(Order order) {
 		Amount amount=new Amount();
@@ -45,7 +47,7 @@ public class PaymentService {
 		transactions.add(transaction);
 		
 		Payer payer=new Payer();
-		payer.setPaymentMethod("Paypal");
+		payer.setPaymentMethod("paypal");
 		
 		Payment payment= new Payment();
 		payment.setIntent("sale");
@@ -53,8 +55,8 @@ public class PaymentService {
 		payment.setTransactions(transactions);
 		
 		RedirectUrls redirecturls=new RedirectUrls();
-		redirecturls.setCancelUrl("http://localhost:8080/payment/cancel");
-		redirecturls.setReturnUrl("http://localhost:8080/payment/success");
+		redirecturls.setCancelUrl(cancelUrl);
+		redirecturls.setReturnUrl(successUrl);
 		
 		payment.setRedirectUrls(redirecturls);
 		try {
@@ -74,30 +76,6 @@ public class PaymentService {
         return null;
     }
 
-  
-    public String executePayment(String paymentId, String payerId,Long orderId) {
-    	Payment payment = new Payment();
-        payment.setId(paymentId);
-        PaymentExecution execution = new PaymentExecution();
-        execution.setPayerId(payerId);
-
-        try {       
-            Payment executed=payment.execute(apicontext, execution);
-            if("approved".equalsIgnoreCase(executed.getState())) {
-            	Order order = orderRepo.findById(orderId)
-                        .orElseThrow(() -> new RuntimeException("Order not found"));
-            	order.setPaymentstatus("completed");
-            	orderRepo.save(order);
-            	return "Payment successful";
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Payment execution failed");
-        }
-        orderservice.updatePaymentStatus(orderId, "FAILED");
-        return "Payment failed";
-        
-    }
     public String markPaymentSuccess(Long orderId) {
 
         Order order = orderRepo.findById(orderId)

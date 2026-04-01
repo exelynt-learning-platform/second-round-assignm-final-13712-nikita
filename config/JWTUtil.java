@@ -14,6 +14,9 @@ public class JWTUtil {
 	private String secret; 
 	
 	public String generateToken(String username) {
+		if (secret.length() < 32) {
+		    throw new RuntimeException("JWT secret must be at least 32 characters");
+		}
 		return Jwts.builder()
 				.setSubject(username)
 				.setIssuedAt(new Date())
