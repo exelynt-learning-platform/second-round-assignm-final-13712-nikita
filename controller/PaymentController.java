@@ -28,7 +28,7 @@ public class PaymentController {
 	private PaymentService paymentservice;
 	@Autowired
 	private OrderService orderservice;
-	@PostMapping("/create/{orderId}")
+	@PostMapping("/pay/{orderId}")
 	public ResponseEntity<?> pay(@AuthenticationPrincipal User user,
 			@PathVariable Long orderId) {
 		Order order=orderservice.getOrderById(user, orderId);

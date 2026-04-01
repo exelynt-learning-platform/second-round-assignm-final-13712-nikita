@@ -37,6 +37,7 @@ public class JWTFilter extends OncePerRequestFilter{
 
 	        String token = header.substring(7);
 	        String username = jwtutil.extractUsername(token);
+	        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
 	        User user = userRepo.findByUsername(username)
 	                .orElseThrow(() -> new RuntimeException("User not found"));
@@ -50,6 +51,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	                new UsernamePasswordAuthenticationToken(user, null, authorities);
 
 	        SecurityContextHolder.getContext().setAuthentication(auth);
+	        }
 	    }
 
 	    filterChain.doFilter(request, response);

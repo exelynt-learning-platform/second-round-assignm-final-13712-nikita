@@ -31,9 +31,7 @@ public class CartService {
 		}
 		Product product=productrepo.findById(productId)
 				.orElseThrow(()-> new ResourceNotFoundException("Product not found"));
-		if(quantity > product.getStockQuantity()) {
-			throw new BadRequestException("Insufficient stock");
-		}
+	
 		Cart cart=cartrepo.findByUser(user)
 				.orElseGet(() -> {
 					Cart newcart=new Cart();
@@ -54,11 +52,7 @@ public class CartService {
 		if (totalQuantity > product.getStockQuantity()) {
 		    throw new BadRequestException("Not enough stock available");
 		}
-		boolean exists=cart.getItem().stream()
-				.anyMatch(item -> item.getProduct().getId().equals(productId));
-		if(exists) {
-			throw new BadRequestException("Product already in cart");
-		}
+	
 		CartItem item=new CartItem();
 		item.setCart(cart);
 		item.setProduct(product);

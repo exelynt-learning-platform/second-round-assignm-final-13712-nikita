@@ -31,7 +31,7 @@ public class CartController {
 	public ResponseEntity<?> getCart(@AuthenticationPrincipal User user){
 		return ResponseEntity.ok(cartservice.getCart(user));
 	}
-	@PutMapping("/updatecart")
+	@PutMapping("/updatecart/{cartItemId}")
 	public ResponseEntity<?> updateCart(@AuthenticationPrincipal User user, @PathVariable Long cartItemId, @RequestParam int quantity){
 		return ResponseEntity.ok(cartservice.updateCart(user, cartItemId, quantity));
 	}
