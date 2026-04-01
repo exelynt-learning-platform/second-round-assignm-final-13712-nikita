@@ -35,7 +35,11 @@ public class AuthService {
 		user.setUsername(dto.getUsername());
 		user.setEmail(dto.getEmail());
 		user.setPassword(encoder.encode(dto.getPassword()));
-		user.setRole(Role.ADMIN);
+		if(dto.getEmail().equals("admin@gmail.com")) {
+		    user.setRole(Role.ADMIN);
+		} else {
+		    user.setRole(Role.USER);
+		}
 		userRepo.save(user);
 		return "User registered successfully!!";
 		

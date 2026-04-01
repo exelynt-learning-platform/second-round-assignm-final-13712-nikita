@@ -33,8 +33,7 @@ public class CartController {
 	}
 	@PutMapping("/updatecart")
 	public ResponseEntity<?> updateCart(@AuthenticationPrincipal User user, @PathVariable Long cartItemId, @RequestParam int quantity){
-		cartservice.updateCart(user, cartItemId, quantity);
-		return ResponseEntity.ok("Cart updated Successfully!!");
+		return ResponseEntity.ok(cartservice.updateCart(user, cartItemId, quantity));
 	}
 	@DeleteMapping("/clear/{cartItemId}")
 	public ResponseEntity<?> clearCart(@AuthenticationPrincipal User user,@PathVariable Long cartItemId){

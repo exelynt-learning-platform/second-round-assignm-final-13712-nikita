@@ -32,6 +32,7 @@ public class OrderService {
 		if(cart.getItem().isEmpty()) {
 			throw new BadRequestException("cart is empty");
 		}
+		
 		Order order=new Order();
 		order.setUser(user);
 		order.setShippingaddress(address);
@@ -44,6 +45,10 @@ public class OrderService {
 		List<OrderItem> orderitems=new ArrayList<>();
 		for(CartItem cartitem:cart.getItem()) {
 			OrderItem orderitem=new OrderItem();
+			double price = cartitem.getProduct().getPrice();
+			if(price <= 0) {
+			    throw new RuntimeException("Invalid product price");
+			}
 			orderitem.setPrice(cartitem.getProduct().getPrice());
 			orderitem.setProduct(cartitem.getProduct());
 			orderitem.setQuantity(cartitem.getQuantity());

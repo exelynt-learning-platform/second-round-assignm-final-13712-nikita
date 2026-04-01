@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ManyToAny;
@@ -24,6 +25,7 @@ public class OrderItem {
 	private double price;
 	@ManyToOne
 	@JsonIgnore
+	@JoinColumn(name = "order_id")
 	private Order order;
 	
 
