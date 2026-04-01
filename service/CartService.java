@@ -44,23 +44,34 @@ public class CartService {
 		Optional<CartItem> existingItem = cart.getItem().stream()
 		        .filter(i -> i.getProduct().getId().equals(productId))
 		        .findFirst();
+		        
 
 		if (existingItem.isPresent()) {
-		    totalQuantity += existingItem.get().getQuantity();
-		}
 
-		if (totalQuantity > product.getStockQuantity()) {
-		    throw new BadRequestException("Not enough stock available");
-		}
+		    int updatedQuantity = existingItem.get().getQuantity() + quantity;
+
+		    if (updatedQuantity > product.getStockQuantity()) {
+		        throw new BadRequestException("Not enough stock available");
+		    }
+
+		    existingItem.get().setQuantity(updatedQuantity);
+
+		} else {
+
+		    if (quantity > product.getStockQuantity()) {
+		        throw new BadRequestException("Not enough stock available");
+		    }
 	
 		CartItem item=new CartItem();
 		item.setCart(cart);
 		item.setProduct(product);
 		item.setQuantity(quantity);
 		cart.getItem().add(item);
+		}
 		cartrepo.save(cart);
 		return cart;
 	}
+		
 	
 	public Cart getCart(User user) {
 		return cartrepo.findByUser(user)
