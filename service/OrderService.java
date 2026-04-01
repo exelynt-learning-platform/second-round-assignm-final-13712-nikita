@@ -27,40 +27,43 @@ public class OrderService {
 	
 	public Order createOrder(User user,String address) {
 		
-		Cart cart=cartRepo.findByUser(user)
-				.orElseThrow(()-> new ResourceNotFoundException("Cart not found"));
-		if(cart.getItem().isEmpty()) {
-			throw new BadRequestException("cart is empty");
-		}
-		
-		Order order=new Order();
-		order.setUser(user);
-		order.setShippingaddress(address);
-		order.setPaymentstatus("Pending");
-		double total=0;
-		for(CartItem item:cart.getItem()) {
-			total+= item.getProduct().getPrice() * item.getQuantity();
-		}
-		order.setTotalPrice(total);
-		List<OrderItem> orderitems=new ArrayList<>();
-		for(CartItem cartitem:cart.getItem()) {
-			OrderItem orderitem=new OrderItem();
-			double price = cartitem.getProduct().getPrice();
-			if(price <= 0) {
-			    throw new RuntimeException("Invalid product price");
-			}
-			orderitem.setPrice(cartitem.getProduct().getPrice());
-			orderitem.setProduct(cartitem.getProduct());
-			orderitem.setQuantity(cartitem.getQuantity());
-			orderitem.setOrder(order);
-			orderitems.add(orderitem);
-		}
-		order.setItems(orderitems);
-		cart.getItem().clear();		
-		return orderRepo.save(order);
-		
-	
+		Cart cart = cartRepo.findByUser(user)
+	            .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+	    if (cart.getItem().isEmpty()) {
+	        throw new RuntimeException("Cart is empty");
+	    }
+
+	    Order order = new Order();
+	    order.setUser(user);
+	    order.setShippingaddress(address);
+	    order.setPaymentstatus("PENDING");
+
+	    double total = 0;
+
+	    List<OrderItem> orderItems = new ArrayList<>();
+
+	    for (CartItem cartItem : cart.getItem()) {
+
+	        OrderItem orderItem = new OrderItem();
+	        orderItem.setProduct(cartItem.getProduct());
+	        orderItem.setQuantity(cartItem.getQuantity());
+	        orderItem.setOrder(order);
+
+	        total += cartItem.getProduct().getPrice() * cartItem.getQuantity();
+
+	        orderItems.add(orderItem);
+	    }
+
+	    order.setItems(orderItems);
+	    order.setTotalPrice(total);
+	    cart.getItem().clear();
+	    cartRepo.save(cart);
+
+	    return orderRepo.save(order);
 	}
+	
+	
 	public List<Order> getuserOrders(User user){
 		return orderRepo.findByUser(user);
 	}

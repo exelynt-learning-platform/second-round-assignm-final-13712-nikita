@@ -83,9 +83,12 @@ public class PaymentService {
 
         try {       
             Payment executed=payment.execute(apicontext, execution);
-            if(executed.getState().equals("approved")) {
-            	orderservice.updatePaymentStatus(orderId, "SUCCESS");
-            	return "Payment success";
+            if("approved".equalsIgnoreCase(executed.getState())) {
+            	Order order = orderRepo.findById(orderId)
+                        .orElseThrow(() -> new RuntimeException("Order not found"));
+            	order.setPaymentstatus("completed");
+            	orderRepo.save(order);
+            	return "Payment successful";
             }
 
         } catch (Exception e) {
