@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ public class PaymentController {
 	private PaymentService paymentservice;
 	@Autowired
 	private OrderService orderservice;
-	@PostMapping("/create/{orderId}")
+	@PostMapping("/pay/{orderId}")
 	public ResponseEntity<?> pay(@AuthenticationPrincipal User user,
 			@PathVariable Long orderId) {
 		Order order=orderservice.getOrderById(user, orderId);
@@ -53,7 +54,7 @@ public class PaymentController {
 
         orderRepo.save(order);
 
-        return ResponseEntity.ok("Payment cancelled");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Paymnet cancelled");
 
        
 	}
