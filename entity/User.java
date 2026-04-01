@@ -1,5 +1,6 @@
 package com.ecommerce.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,9 +26,11 @@ public class User {
 	private String username;
 	@Email(message = "Invalid email")
 	@NotBlank(message = "Email is required")
+	@Column(nullable = false, unique = true)
 	private String email;
 	@NotBlank(message = "password is required")
 	@Size(min=6, message = "password should be atleast 6 charactes")
+	@Column(nullable = false)
 	private String password;
 	@Enumerated(EnumType.STRING)
 	private Role role;

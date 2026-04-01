@@ -12,12 +12,13 @@ public class RegisterRequest {
     @Size(min = 3, max = 20)
     private String username;
 
-    @Email(message = "Invalid email")
+    @Email
     @NotBlank(message = "Email is required")
     private String email;
 
     @NotBlank(message = "Password is required")
     @Size(min = 6)
     private String password;
+    private String adminkey;
 
 }

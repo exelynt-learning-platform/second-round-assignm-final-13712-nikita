@@ -1,5 +1,7 @@
 package com.ecommerce.config;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -18,7 +21,7 @@ public class SecurityConfig {
 	private JWTFilter jwtfilter;
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http)throws Exception {
-		http.csrf().disable()
+		http.cors().and().csrf().disable()
 		.authorizeHttpRequests(auth -> auth
 			.antMatchers("/auth/**").permitAll()
 			.antMatchers("/products/create", "/products/update/**", "/products/delete/**")

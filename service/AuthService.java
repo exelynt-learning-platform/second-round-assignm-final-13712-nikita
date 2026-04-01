@@ -35,7 +35,7 @@ public class AuthService {
 		user.setUsername(dto.getUsername());
 		user.setEmail(dto.getEmail());
 		user.setPassword(encoder.encode(dto.getPassword()));
-		if(dto.getEmail().equals("admin@gmail.com")) {
+		if("ADMIN_SECRET".equals(dto.getAdminkey())) {
 		    user.setRole(Role.ADMIN);
 		} else {
 		    user.setRole(Role.USER);

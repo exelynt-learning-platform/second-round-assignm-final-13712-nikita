@@ -10,11 +10,13 @@ import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.CartItem;
 import com.ecommerce.entity.Order;
 import com.ecommerce.entity.OrderItem;
+import com.ecommerce.entity.Product;
 import com.ecommerce.entity.User;
 import com.ecommerce.exception.BadRequestException;
 import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.OrderRepository;
+import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.repository.UserRepository;
 
 @Service
@@ -23,7 +25,9 @@ public class OrderService {
 	@Autowired
 	private OrderRepository orderRepo;
 	@Autowired
-	private CartRepository cartRepo;;
+	private CartRepository cartRepo;
+	@Autowired
+	private ProductRepository productRepo;
 	
 	public Order createOrder(User user,String address) {
 		
@@ -33,7 +37,7 @@ public class OrderService {
 	    if (cart.getItem().isEmpty()) {
 	        throw new RuntimeException("Cart is empty");
 	    }
-
+	    cartRepo.save(cart);
 	    Order order = new Order();
 	    order.setUser(user);
 	    order.setShippingaddress(address);
@@ -44,8 +48,17 @@ public class OrderService {
 	    List<OrderItem> orderItems = new ArrayList<>();
 
 	    for (CartItem cartItem : cart.getItem()) {
+	    	Product product = cartItem.getProduct();
+	        if (cartItem.getQuantity() > product.getStockQuantity()) {
+	            throw new BadRequestException("Insufficient stock for " + product.getName());
+	        }
+	        product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
+	        productRepo.save(product); 
+
+	        double price = product.getPrice();
 
 	        OrderItem orderItem = new OrderItem();
+	        orderItem.setPrice(price);
 	        orderItem.setProduct(cartItem.getProduct());
 	        orderItem.setQuantity(cartItem.getQuantity());
 	        orderItem.setOrder(order);
@@ -67,7 +80,7 @@ public class OrderService {
 	public List<Order> getuserOrders(User user){
 		return orderRepo.findByUser(user);
 	}
-	public Order getOrderById(User user, Long orderId ) {
+	public Order getorderById(User user, Long orderId ) {
 		Order order=orderRepo.findById(orderId)
 				.orElseThrow(()-> new ResourceNotFoundException("Order not found"));
 		if(!order.getUser().getId().equals(user.getId())) {
